@@ -32,15 +32,14 @@ cargo run                                     # serves on 0.0.0.0:8080
 | `cargo fmt --check` clean | ✅ |
 | `cargo clippy --all-targets -- -D warnings` clean | ✅ |
 | `cargo test` green | ✅ 40 tests (6 suites) |
-| `.sqlx` builds without a live DB | ✅ generated (44 queries) — see caveat |
+| `.sqlx` builds without a live DB | ✅ generated (44 queries) + committed |
 | `migrations/` full schema + 3 plans seeded | ✅ |
 | README documents env vars + run/test | ✅ (endpoint list now full too) |
 | Layer boundaries respected | ✅ no sqlx outside `infrastructure`; no logic in `web`; pure `domain` |
 
-**⚠ One open item:** the repo is **not a git repo** (`is git: false`), so `.sqlx`
-is generated but *not committed*. To satisfy "commit `.sqlx`": `git init`, add a
-remote if wanted, then commit (`.gitignore` already excludes `target/ .env /storage`
-and keeps `.sqlx`).
+**Git:** initialized + pushed. Remote `origin` = `https://github.com/Dinesh417G/electronix_id.git`,
+branch `main`. Initial commit = 118 files (`.sqlx` committed). `.gitignore` excludes
+`target/ .idea/ .env /storage`, keeps `.sqlx`.
 
 ---
 
@@ -104,5 +103,4 @@ Likely shape (confirm scope with user before building):
 - Still out of scope: MQTT, edge-agent, ingest, taggen, live telemetry, payments,
   R2 wiring, Next.js UI.
 
-Other backlog (optional, not blocking): `utoipa` OpenAPI (§8 optional); `git init`
-to actually commit `.sqlx`.
+Other backlog (optional, not blocking): `utoipa` OpenAPI (§8 optional).
