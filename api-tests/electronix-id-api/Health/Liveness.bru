@@ -1,0 +1,18 @@
+meta {
+  name: Liveness
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{rootUrl}}/health
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}
+
+docs {
+  Liveness probe. Lives at the host root (/health), NOT under /api/v1 — uses {{rootUrl}}. Run this first to confirm the API is reachable.
+}

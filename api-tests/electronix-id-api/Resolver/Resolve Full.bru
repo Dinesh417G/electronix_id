@@ -1,0 +1,19 @@
+meta {
+  name: Resolve Full
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{resolverUrl}}/r/{{publicCode}}/full
+  auth: inherit
+}
+
+assert {
+  res.status: eq 200
+  res.body.documents: isDefined
+}
+
+docs {
+  Gated: requires a bearer token whose org owns the machine (inherits {{accessToken}}). Adds the document inventory to the summary. A token from another org gets 404 (cross-org isolation).
+}

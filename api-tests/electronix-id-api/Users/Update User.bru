@@ -1,0 +1,25 @@
+meta {
+  name: Update User
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/users/{{userId}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "role": "viewer"
+  }
+}
+
+assert {
+  res.status: eq 200
+}

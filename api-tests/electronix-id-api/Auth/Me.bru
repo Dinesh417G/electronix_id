@@ -1,0 +1,18 @@
+meta {
+  name: Me
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/auth/me
+  auth: inherit
+}
+
+assert {
+  res.status: eq 200
+}
+
+docs {
+  Current user + organization. The response must never contain a password hash.
+}

@@ -1,0 +1,14 @@
+meta {
+  name: Get Version 1
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/documents/{{documentId}}/versions/1
+  auth: inherit
+}
+
+assert {
+  res.status: eq 200
+}

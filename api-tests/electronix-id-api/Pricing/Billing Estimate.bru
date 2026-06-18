@@ -1,0 +1,18 @@
+meta {
+  name: Billing Estimate
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/organization/billing/estimate
+  auth: inherit
+}
+
+assert {
+  res.status: eq 200
+}
+
+docs {
+  Recurring = sum of active machines' plan price. Money returned as { amount_minor, currency }.
+}

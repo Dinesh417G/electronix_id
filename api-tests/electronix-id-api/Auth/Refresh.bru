@@ -1,0 +1,41 @@
+meta {
+  name: Refresh
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/auth/refresh
+  body: json
+  auth: none
+}
+
+script:pre-request {
+  // Stash the token we are about to consume so the next request can prove that
+  // reusing a rotated token is rejected. (post-response overwrites refreshToken.)
+  bru.setVar("prevRefreshToken", bru.getVar("refreshToken"));
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "refresh_token": "{{refreshToken}}"
+  }
+}
+
+vars:post-response {
+  accessToken: res.body.access_token
+  refreshToken: res.body.refresh_token
+}
+
+assert {
+  res.status: eq 200
+  res.body.access_token: isDefined
+}
+
+docs {
+  Rotates the refresh token: new access + new refresh, and revokes the old one. The pre-request script saves the consumed token as prevRefreshToken; the next request (Refresh Reuse Rejected) replays it and must get 401.
+}

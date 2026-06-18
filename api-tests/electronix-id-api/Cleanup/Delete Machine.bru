@@ -1,0 +1,18 @@
+meta {
+  name: Delete Machine
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{baseUrl}}/machines/{{machineId}}
+  auth: inherit
+}
+
+assert {
+  res.status: eq 204
+}
+
+docs {
+  Cascades to the machine's documents and versions. Runs last in a full pass.
+}

@@ -1,0 +1,21 @@
+meta {
+  name: Resolve Summary
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{resolverUrl}}/r/{{publicCode}}
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.machine_name: isDefined
+  res.body.organization_name: isDefined
+  res.body.has_photo: eq false
+}
+
+docs {
+  Public, no auth. Maps the opaque public_code to a passport summary: machine identity + org name + photo link. No photo was uploaded in this run, so has_photo is false.
+}

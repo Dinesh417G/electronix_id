@@ -1,0 +1,14 @@
+meta {
+  name: Get Machine
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/machines/{{machineId}}
+  auth: inherit
+}
+
+assert {
+  res.status: eq 200
+}

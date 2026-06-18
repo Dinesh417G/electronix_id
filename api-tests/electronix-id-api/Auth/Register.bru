@@ -1,0 +1,44 @@
+meta {
+  name: Register
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/auth/register
+  body: json
+  auth: none
+}
+
+script:pre-request {
+  // unique email each run so the collection can be re-run cleanly
+  bru.setVar("runEmail", "owner+" + Date.now() + "@acme.test");
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "organization_name": "Acme Tools",
+    "email": "{{runEmail}}",
+    "password": "{{userPassword}}",
+    "full_name": "Plant Owner"
+  }
+}
+
+vars:post-response {
+  accessToken: res.body.access_token
+  refreshToken: res.body.refresh_token
+}
+
+assert {
+  res.status: eq 201
+  res.body.access_token: isDefined
+  res.body.refresh_token: isDefined
+}
+
+docs {
+  Creates an organization + owner user + a trialing subscription and returns tokens. Tokens are captured for the rest of the run.
+}

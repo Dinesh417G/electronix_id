@@ -1,0 +1,29 @@
+meta {
+  name: Logout
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/auth/logout
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "refresh_token": "{{refreshToken}}"
+  }
+}
+
+assert {
+  res.status: eq 204
+}
+
+docs {
+  Revokes the current refresh token. Afterwards, Refresh with the same token must fail (401).
+}

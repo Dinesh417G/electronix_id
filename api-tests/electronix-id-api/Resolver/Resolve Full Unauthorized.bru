@@ -1,0 +1,18 @@
+meta {
+  name: Resolve Full Unauthorized
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{resolverUrl}}/r/{{publicCode}}/full
+  auth: none
+}
+
+assert {
+  res.status: eq 401
+}
+
+docs {
+  Same /full endpoint with no bearer token → 401. Proves the full passport is login-gated while the summary stays public.
+}

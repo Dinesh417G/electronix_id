@@ -1,0 +1,36 @@
+meta {
+  name: Create JSON Spec Slot
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/machines/{{machineId}}/documents
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "category": "specification",
+    "name": "Machine Specifications",
+    "storage_kind": "json"
+  }
+}
+
+vars:post-response {
+  jsonDocId: res.body.id
+}
+
+assert {
+  res.status: eq 201
+  res.body.id: isDefined
+}
+
+docs {
+  Creates a json-kind document SLOT only — the create-slot endpoint stores no payload. The first JSON version is posted separately by `Upload JSON Version`. Captures jsonDocId.
+}

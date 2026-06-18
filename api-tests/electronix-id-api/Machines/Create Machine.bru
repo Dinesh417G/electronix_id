@@ -1,0 +1,41 @@
+meta {
+  name: Create Machine
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/machines
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "CNC Lathe 01",
+    "make": "DMG Mori",
+    "model": "NLX 2500",
+    "serial_number": "SN-12345",
+    "location": "Bay 3"
+  }
+}
+
+vars:post-response {
+  machineId: res.body.id
+  publicCode: res.body.public_code
+}
+
+assert {
+  res.status: eq 201
+  res.body.id: isDefined
+  res.body.public_code: isDefined
+}
+
+docs {
+  Creates a machine and captures its id (for Documents) and its public_code (for the Resolver folder).
+  The tier/plan is NOT set here — the create endpoint has no plan_code field. Use `Change Tier` to assign a plan.
+}

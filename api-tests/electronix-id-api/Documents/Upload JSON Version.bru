@@ -1,0 +1,36 @@
+meta {
+  name: Upload JSON Version
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/documents/{{jsonDocId}}/versions
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "content": {
+      "spindle_kw": 18.5,
+      "max_rpm": 4000,
+      "axes": 2
+    },
+    "change_note": "initial spec"
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body.version_no: eq 1
+  res.body.is_current: eq true
+}
+
+docs {
+  New version for a json-kind document. The payload field is `content` (must be an object or array), NOT content_json. version_no should be 1 and is_current true.
+}

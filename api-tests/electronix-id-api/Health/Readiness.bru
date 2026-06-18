@@ -1,0 +1,18 @@
+meta {
+  name: Readiness
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{rootUrl}}/health/ready
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}
+
+docs {
+  Readiness probe: runs a DB `SELECT 1`. 200 = the pool is up. 503 if the database is unreachable.
+}

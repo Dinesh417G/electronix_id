@@ -1,0 +1,23 @@
+meta {
+  name: Rotate Tag
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/machines/{{machineId}}/tag/rotate
+  auth: inherit
+}
+
+vars:post-response {
+  publicCode: res.body.public_code
+}
+
+assert {
+  res.status: eq 200
+  res.body.public_code: isDefined
+}
+
+docs {
+  Owner/admin only. Issues a fresh public_code and revokes the old QR tag. Recaptures publicCode so the Resolver folder resolves the new code. The old code now 404s on the resolver.
+}

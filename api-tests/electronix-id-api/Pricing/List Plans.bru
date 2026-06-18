@@ -1,0 +1,18 @@
+meta {
+  name: List Plans
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/plans
+  auth: inherit
+}
+
+assert {
+  res.status: eq 200
+}
+
+docs {
+  Catalog: basic, live, predict.
+}

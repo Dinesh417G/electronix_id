@@ -1,0 +1,29 @@
+meta {
+  name: Change Tier
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/machines/{{machineId}}/tier
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "plan_code": "live"
+  }
+}
+
+assert {
+  res.status: eq 200
+}
+
+docs {
+  Owner/admin only. A viewer or engineer token must get 403 here.
+}

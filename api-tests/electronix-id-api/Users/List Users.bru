@@ -1,0 +1,14 @@
+meta {
+  name: List Users
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/users
+  auth: inherit
+}
+
+assert {
+  res.status: eq 200
+}

@@ -1,0 +1,18 @@
+meta {
+  name: Download Version 1
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/documents/{{documentId}}/versions/1/download
+  auth: inherit
+}
+
+assert {
+  res.status: eq 200
+}
+
+docs {
+  Streams the stored bytes. Should match the uploaded sample file byte-for-byte.
+}

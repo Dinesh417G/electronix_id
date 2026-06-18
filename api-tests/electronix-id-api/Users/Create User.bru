@@ -1,0 +1,41 @@
+meta {
+  name: Create User
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/users
+  body: json
+  auth: inherit
+}
+
+script:pre-request {
+  bru.setVar("newUserEmail", "engineer+" + Date.now() + "@acme.test");
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "{{newUserEmail}}",
+    "password": "{{userPassword}}",
+    "full_name": "Field Engineer",
+    "role": "engineer"
+  }
+}
+
+vars:post-response {
+  userId: res.body.id
+}
+
+assert {
+  res.status: eq 201
+  res.body.id: isDefined
+}
+
+docs {
+  Admin/owner only. Creates an engineer in the same org.
+}

@@ -1,0 +1,24 @@
+meta {
+  name: Upload Version 2 (file)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/documents/{{documentId}}/versions
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  file: @file(samples/sample-program.txt)
+  change_note: fixed offset bug
+}
+
+assert {
+  res.status: eq 201
+}
+
+docs {
+  Second upload -> version 2 becomes current; version 1 is retained.
+}

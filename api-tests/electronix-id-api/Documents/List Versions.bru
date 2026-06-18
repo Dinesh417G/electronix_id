@@ -1,0 +1,19 @@
+meta {
+  name: List Versions
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/documents/{{documentId}}/versions
+  auth: inherit
+}
+
+assert {
+  res.status: eq 200
+  res.body.data: isDefined
+}
+
+docs {
+  History, newest first. Exactly one version has is_current=true.
+}

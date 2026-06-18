@@ -1,0 +1,29 @@
+meta {
+  name: Refresh Reuse Rejected
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/auth/refresh
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "refresh_token": "{{prevRefreshToken}}"
+  }
+}
+
+assert {
+  res.status: eq 401
+}
+
+docs {
+  Replays the refresh token already consumed by `Refresh`. Rotation revoked it, so this must be 401. Proves a stolen/old refresh token cannot be reused.
+}

@@ -1,0 +1,25 @@
+meta {
+  name: Update Organization
+  type: http
+  seq: 2
+}
+
+patch {
+  url: {{baseUrl}}/organization
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Acme Tools Pvt Ltd"
+  }
+}
+
+assert {
+  res.status: eq 200
+}

@@ -1,0 +1,14 @@
+meta {
+  name: Subscription
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/organization/subscription
+  auth: inherit
+}
+
+assert {
+  res.status: eq 200
+}

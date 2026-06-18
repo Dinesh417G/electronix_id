@@ -1,0 +1,26 @@
+meta {
+  name: Update Machine
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/machines/{{machineId}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "location": "Bay 5",
+    "status": "maintenance"
+  }
+}
+
+assert {
+  res.status: eq 200
+}

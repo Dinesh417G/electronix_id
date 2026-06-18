@@ -1,0 +1,16 @@
+auth {
+  mode: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+docs {
+  # ElectronIx ID API
+
+  Select the **Local** environment first (top-right).
+  Run order for a full pass: Health -> Auth -> Machines -> Documents -> Pricing -> Users -> Organization -> Resolver -> Cleanup.
+  Register captures the access token automatically; every other request inherits it as a bearer token.
+  The Resolver folder hits a SEPARATE binary on :8081 — start `cargo run -p electronix-id-resolver` too, or skip that folder.
+}

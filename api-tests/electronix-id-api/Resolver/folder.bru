@@ -1,0 +1,11 @@
+meta {
+  name: Resolver
+  seq: 8
+}
+
+docs {
+  Public QR-scan resolver — a SEPARATE binary on port 8081 ({{resolverUrl}}), not the api.
+  Run it too: `cargo run -p electronix-id-resolver`. If it is not running, every request here
+  fails with a connection error (not an assertion failure). These use {{publicCode}} captured by
+  Create Machine / Rotate Tag. Runs before Cleanup so the machine still exists.
+}

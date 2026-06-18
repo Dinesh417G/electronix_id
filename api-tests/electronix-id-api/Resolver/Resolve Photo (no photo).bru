@@ -1,0 +1,18 @@
+meta {
+  name: Resolve Photo (no photo)
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{resolverUrl}}/r/{{publicCode}}/photo
+  auth: none
+}
+
+assert {
+  res.status: eq 404
+}
+
+docs {
+  Public photo stream. This run never uploads a photo-category document, so primary_photo_version_id is null → 404. Upload a `photo` document and set it current to get a 200 image stream here.
+}

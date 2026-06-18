@@ -1,0 +1,14 @@
+meta {
+  name: Get Organization
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/organization
+  auth: inherit
+}
+
+assert {
+  res.status: eq 200
+}
