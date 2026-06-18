@@ -2,6 +2,7 @@
 
 Session handoff. Spec = `../CLAUDE.md`. **M0–M8 COMPLETE.**
 **Resolver/QR-scan milestone also COMPLETE** (see "Resolver milestone" below).
+**Bruno API test collection COMPLETE** (see "Bruno API collection" below).
 Next session: see "NEXT MILESTONE" at the bottom.
 
 ---
@@ -126,6 +127,40 @@ migrations (api owns the schema). All `query!` macros stay in api, so the single
 *Verify:* `cargo run -p electronix-id-resolver`. Gates all green: `cargo fmt
 --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test` = **43 tests**.
 `./.sqlx` regenerated (`cargo sqlx prepare --workspace`) and committed.
+
+---
+
+## Bruno API collection (COMPLETE)
+
+Click-through / smoke-test collection for the API, committed at
+**`api-tests/electronix-id-api/`** (versioned with code; its own `CLAUDE.md`
+inside says keep it in sync on every endpoint change). Companion doc:
+`Bruno-Collection-Guide.md` at repo root. A redistributable `.zip` sits at repo
+root but is **git-ignored-by-omission** (untracked, derived from the folder — do
+not commit; regenerate via `Compress-Archive`).
+
+- **Run:** open the folder in Bruno desktop → select **Local** env → Run Collection.
+  CLI: `npm i -g @usebruno/cli && bru run --env Local`. Not yet run green in CI;
+  validated structurally + cross-checked against live handlers/DTOs.
+- **Env vars** (`environments/Local.bru`): `rootUrl` (:8080 host root, for
+  `/health`), `baseUrl` (:8080/api/v1), `resolverUrl` (:8081), `userPassword`.
+- **Folders / run order:** Health → Auth → Machines → Documents → Pricing →
+  Users → Organization → Resolver → Cleanup. Collection-level bearer = captured
+  `{{accessToken}}`; auth/public requests set `auth: none`.
+- **Var chain:** Register/Login → `accessToken`+`refreshToken`; Refresh stashes
+  `prevRefreshToken`; Create Machine → `machineId`+`publicCode`; Rotate Tag
+  re-sets `publicCode`; Create Document Slot → `documentId`; Create JSON Spec
+  Slot → `jsonDocId`; Create User → `userId`.
+- **Resolver folder hits the separate :8081 binary** — run
+  `cargo run -p electronix-id-resolver` too, or skip that folder (else those 4
+  requests error on connect).
+- Covers every API route incl. `POST /machines/{id}/tag/rotate` and resolver
+  `/r/{code}` summary/full/photo. Negative checks automated: refresh-reuse→401,
+  full-no-token→401, photo-absent→404. Adversarial cross-org/RBAC/422 still
+  manual (guide §10).
+
+Commit `97bd122` (pushed to `origin/main`). When you add/change an endpoint,
+update the matching `.bru` in the same change (collection's `CLAUDE.md` rule).
 
 ---
 
