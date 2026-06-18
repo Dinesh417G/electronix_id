@@ -15,7 +15,7 @@ use sqlx::MySqlPool;
 use crate::application::error::{AppResult, ApplicationError};
 use crate::application::ports::document_repo::{DocumentRepository, NewVersionInput};
 use crate::domain::document::{Document, DocumentVersion};
-use crate::domain::ids::{DocumentId, MachineId, OrgId};
+use crate::domain::ids::{DocumentId, MachineId, OrgId, VersionId};
 use crate::domain::value_objects::{DocumentCategory, StorageKind};
 use crate::infrastructure::persistence::{map_sqlx, parse_uuid, to_utc};
 
@@ -310,6 +310,27 @@ impl DocumentRepository for MySqlDocumentRepo {
             "#,
             doc.to_string(),
             org.to_string(),
+        )
+        .fetch_optional(&self.pool)
+        .await
+        .map_err(|e| map_sqlx(e, "document version"))?;
+
+        row.map(VersionRow::into_domain).transpose()
+    }
+
+    async fn find_version_by_id(&self, id: VersionId) -> AppResult<Option<DocumentVersion>> {
+        let row = sqlx::query_as!(
+            VersionRow,
+            r#"
+            SELECT id, document_id, version_no, is_current AS `is_current: bool`,
+                   storage_key, original_filename, mime_type, size_bytes, checksum_sha256,
+                   CAST(content_json AS CHAR) AS `content_json: String`,
+                   change_note, CAST(metadata AS CHAR) AS `metadata: String`,
+                   created_by, created_at
+            FROM document_versions
+            WHERE id = ?
+            "#,
+            id.to_string(),
         )
         .fetch_optional(&self.pool)
         .await

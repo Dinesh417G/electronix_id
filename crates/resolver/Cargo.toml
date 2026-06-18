@@ -1,0 +1,38 @@
+[package]
+name = "electronix-id-resolver"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+
+[lib]
+name = "electronix_id_resolver"
+path = "src/lib.rs"
+
+[[bin]]
+name = "resolver"
+path = "src/main.rs"
+
+[dependencies]
+# Reuse the api crate's domain types, repository traits + MySQL adapters,
+# security (JWT), storage, and config. The resolver adds no new DB queries —
+# all sqlx::query! macros live in the api crate, so its .sqlx cache covers us.
+electronix-id-api = { path = "../api" }
+
+axum = { version = "0.8", features = ["macros"] }
+tokio = { version = "1", features = ["full"] }
+tower-http = { version = "0.6", features = ["trace", "cors", "request-id"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+chrono = { version = "0.4", features = ["serde"] }
+sqlx = { version = "0.8", features = ["runtime-tokio", "tls-rustls", "mysql"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+anyhow = "1"
+dotenvy = "0.15"
+
+[dev-dependencies]
+electronix-id-api = { path = "../api" }
+http-body-util = "0.1"
+tower = { version = "0.5", features = ["util"] }
+serde_json = "1"
+uuid = { version = "1", features = ["v7"] }

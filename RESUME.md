@@ -1,7 +1,8 @@
 # RESUME — ElectronIx ID backend
 
-Session handoff. Spec = `../CLAUDE.md`. **This milestone (M0–M8) is COMPLETE.**
-Next session starts the *next* milestone (resolver + QR scan — see bottom).
+Session handoff. Spec = `../CLAUDE.md`. **M0–M8 COMPLETE.**
+**Resolver/QR-scan milestone also COMPLETE** (see "Resolver milestone" below).
+Next session: see "NEXT MILESTONE" at the bottom.
 
 ---
 
@@ -88,19 +89,57 @@ branch `main`. Initial commit = 118 files (`.sqlx` committed). `.gitignore` excl
 
 ---
 
-## NEXT MILESTONE (start here next session)
-Per `CLAUDE.md` §14 final line + §2 "out of scope (future crates)": the next,
-**separate** milestone adds the **`resolver` crate and the QR scan path**.
+## Resolver milestone (COMPLETE)
 
-Likely shape (confirm scope with user before building):
-- New workspace member `crates/resolver` (add to root `Cargo.toml` members).
-- QR/tag → machine resolution endpoint(s): scan a tag id → public-ish machine
-  passport view (current photo + current document versions), respecting tiers.
-- Decide auth model for scans (public read vs. token-gated) and what a scan
-  exposes vs. the authenticated API.
-- Keep the same layering; reuse `domain` (extract a `shared` crate only when the
-  edge agent arrives — not yet, per §4).
-- Still out of scope: MQTT, edge-agent, ingest, taggen, live telemetry, payments,
-  R2 wiring, Next.js UI.
+New workspace member **`crates/resolver`** — a separate **public** binary (port
+`:8081`, `RESOLVER_BIND_ADDR`) that maps a machine's opaque QR tag code to a
+passport view. Reuses the api crate as a library (domain, repo traits + MySQL
+adapters, JWT, storage, `Settings`); owns **no** persistence code and runs **no**
+migrations (api owns the schema). All `query!` macros stay in api, so the single
+`./.sqlx` cache covers both crates.
+
+**Scope decisions (made with user via AskUserQuestion):**
+1. Deploy shape = **separate binary service** (not routes in api, not a lib-only crate).
+2. Scan auth = **public minimal summary + login-gated full detail**.
+3. Tag scheme = **opaque per-machine `public_code`** (rotatable), not the UUID.
+
+**api-side changes (tag scheme lives on the machine):**
+- `migrations/0003_machine_public_code.sql` — `machines.public_code CHAR(16) NULL
+  UNIQUE`; existing rows backfilled from the id hex, new rows get a random
+  Crockford-base32 code (`value_objects::PublicCode::generate`, 16 chars ≈ 2^80).
+- `Machine.public_code` field; repo SELECT/INSERT/UPDATE carry it; new **unscoped**
+  `MachineRepository::find_by_public_code` + `DocumentRepository::find_version_by_id`
+  (for the public photo via `primary_photo_version_id`).
+- `MachineService`: generates a code on create; `rotate_public_code` (admin/owner).
+- `MachineResponse.public_code`; `POST /api/v1/machines/{id}/tag/rotate`.
+
+**resolver crate** (`src/{config,state,auth,dto,handlers,router,lib}.rs` + bin):
+- `GET /r/{code}` public summary · `GET /r/{code}/photo` public photo stream ·
+  `GET /r/{code}/full` gated (token whose org owns the machine; cross-org → 404).
+- Reuses api's `AppError` for an identical error envelope. `ScanViewer` extractor
+  verifies the bearer JWT via the shared secret.
+- Tests (`tests/resolve.rs`, `#[sqlx::test]`): seed via the **api** router, exercise
+  the **resolver** router over the shared pool — summary fields, unknown→404,
+  full requires auth (401), cross-org→404, owner sees inventory, photo-absent→404,
+  and tag-rotation revokes the old code.
+
+*Verify:* `cargo run -p electronix-id-resolver`. Gates all green: `cargo fmt
+--check`, `cargo clippy --all-targets -- -D warnings`, `cargo test` = **43 tests**.
+`./.sqlx` regenerated (`cargo sqlx prepare --workspace`) and committed.
+
+---
+
+## NEXT MILESTONE (start here next session)
+Per `CLAUDE.md` §2 "out of scope (future crates)". Confirm scope with the user
+first. Candidates, roughly in order:
+- **`edge-agent` / `ingest`** + MQTT and the LIVE-tier telemetry data path
+  (`tier_allows(machine, "live_data")` is already wired as the gate).
+- **`taggen`** — generate the printable QR assets that encode `/r/{public_code}`.
+- When a *second* consumer of the domain lands (the edge agent), extract a
+  `shared` crate (per §4) instead of depending on the whole `api` crate as we do
+  for the resolver now.
+
+Still out of scope: payments/Razorpay, Cloudflare R2 wiring (behind `FileStorage`),
+Next.js UI, Tauri field app.
 
 Other backlog (optional, not blocking): `utoipa` OpenAPI (§8 optional).

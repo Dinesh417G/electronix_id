@@ -33,7 +33,7 @@ use electronix_id_api::application::pricing_service::PricingService;
 use electronix_id_api::application::user_service::UserService;
 use electronix_id_api::domain::document::{Document, DocumentVersion};
 use electronix_id_api::domain::ids::{
-    DocumentId, MachineId, OrgId, PlanId, RefreshTokenId, UserId,
+    DocumentId, MachineId, OrgId, PlanId, RefreshTokenId, UserId, VersionId,
 };
 use electronix_id_api::domain::machine::Machine;
 use electronix_id_api::domain::organization::Organization;
@@ -194,6 +194,15 @@ impl MachineRepository for InMemoryMachineRepo {
             .filter(|m| m.organization_id == org)
             .cloned()
             .ok_or_else(|| not_found("machine"))
+    }
+    async fn find_by_public_code(&self, code: &str) -> AppResult<Option<Machine>> {
+        Ok(self
+            .rows
+            .lock()
+            .unwrap()
+            .values()
+            .find(|m| m.public_code.as_deref() == Some(code))
+            .cloned())
     }
     async fn list(&self, org: OrgId, limit: i64, offset: i64) -> AppResult<(Vec<Machine>, i64)> {
         let mut all: Vec<Machine> = self
@@ -530,6 +539,16 @@ impl DocumentRepository for InMemoryDocumentRepo {
             .unwrap()
             .iter()
             .find(|v| v.document_id == doc && v.is_current)
+            .cloned())
+    }
+
+    async fn find_version_by_id(&self, id: VersionId) -> AppResult<Option<DocumentVersion>> {
+        Ok(self
+            .versions
+            .lock()
+            .unwrap()
+            .iter()
+            .find(|v| v.id == id)
             .cloned())
     }
 

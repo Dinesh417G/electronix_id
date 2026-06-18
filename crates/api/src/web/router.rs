@@ -51,6 +51,7 @@ pub fn build_router(state: AppState) -> Router {
                 .delete(machines::delete),
         )
         .route("/machines/{id}/tier", patch(machines::set_tier))
+        .route("/machines/{id}/tag/rotate", post(machines::rotate_tag))
         // documents on a machine
         .route(
             "/machines/{machine_id}/documents",

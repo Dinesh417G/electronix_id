@@ -16,6 +16,10 @@ pub struct Machine {
     pub model: Option<String>,
     pub serial_number: Option<String>,
     pub asset_tag: Option<String>,
+    /// Opaque public tag code for the QR/scan resolver (`None` = no active tag).
+    /// Encoded in the machine's QR; rotatable to revoke a tag. See
+    /// [`crate::domain::value_objects::PublicCode`].
+    pub public_code: Option<String>,
     pub location: Option<String>,
     pub year_installed: Option<i16>,
     pub status: MachineStatus,

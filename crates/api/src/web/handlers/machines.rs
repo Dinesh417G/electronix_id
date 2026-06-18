@@ -128,3 +128,17 @@ pub async fn set_tier(
         .await?;
     Ok(Json(machine.into()))
 }
+
+/// Issue a fresh public scan code, revoking the old QR tag. Admin/owner only.
+pub async fn rotate_tag(
+    State(st): State<AppState>,
+    user: AuthUser,
+    Path(id): Path<String>,
+) -> ApiResult<Json<MachineResponse>> {
+    let id: MachineId = parse_id(&id, "machine")?;
+    let machine = st
+        .machines
+        .rotate_public_code(user.organization_id, user.role, id)
+        .await?;
+    Ok(Json(machine.into()))
+}

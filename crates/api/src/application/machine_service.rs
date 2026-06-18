@@ -11,7 +11,7 @@ use crate::application::ports::machine_repo::MachineRepository;
 use crate::application::ports::plan_repo::PlanRepository;
 use crate::domain::ids::{MachineId, OrgId, UserId};
 use crate::domain::machine::Machine;
-use crate::domain::value_objects::{MachineStatus, Role, Tier};
+use crate::domain::value_objects::{MachineStatus, PublicCode, Role, Tier};
 
 #[derive(Debug, Default)]
 pub struct NewMachine {
@@ -79,6 +79,9 @@ impl MachineService {
             model: input.model,
             serial_number: input.serial_number,
             asset_tag: input.asset_tag,
+            // Every machine gets an opaque scan code at birth so its QR tag works
+            // immediately; admins can rotate it later to revoke a printed tag.
+            public_code: Some(PublicCode::generate()),
             location: input.location,
             year_installed: input.year_installed,
             status: input.status.unwrap_or_default(),
@@ -151,6 +154,22 @@ impl MachineService {
             .ok_or_else(|| ApplicationError::not_found("plan"))?;
         let mut m = self.machines.find_by_id(org, id).await?;
         m.plan_id = Some(plan.id);
+        m.updated_at = Utc::now();
+        self.machines.update(&m).await?;
+        Ok(m)
+    }
+
+    /// Issue a fresh public tag code, revoking the previous one. Admin/owner only.
+    /// Use after a tag is reprinted or a QR may have been copied off the floor.
+    pub async fn rotate_public_code(
+        &self,
+        org: OrgId,
+        actor_role: Role,
+        id: MachineId,
+    ) -> AppResult<Machine> {
+        require_role(actor_role, Role::Admin)?;
+        let mut m = self.machines.find_by_id(org, id).await?;
+        m.public_code = Some(PublicCode::generate());
         m.updated_at = Utc::now();
         self.machines.update(&m).await?;
         Ok(m)

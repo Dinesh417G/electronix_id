@@ -31,6 +31,7 @@ struct MachineRow {
     model: Option<String>,
     serial_number: Option<String>,
     asset_tag: Option<String>,
+    public_code: Option<String>,
     location: Option<String>,
     year_installed: Option<i16>,
     status: String,
@@ -51,6 +52,7 @@ impl MachineRow {
             model: self.model,
             serial_number: self.serial_number,
             asset_tag: self.asset_tag,
+            public_code: self.public_code,
             location: self.location,
             year_installed: self.year_installed,
             status: MachineStatus::from_str(&self.status).map_err(ApplicationError::internal)?,
@@ -73,9 +75,9 @@ impl MachineRepository for MySqlMachineRepo {
             r#"
             INSERT INTO machines
               (id, organization_id, plan_id, name, make, model, serial_number, asset_tag,
-               location, year_installed, status, primary_photo_version_id, created_by,
-               created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+               public_code, location, year_installed, status, primary_photo_version_id,
+               created_by, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             "#,
             machine.id.to_string(),
             machine.organization_id.to_string(),
@@ -85,6 +87,7 @@ impl MachineRepository for MySqlMachineRepo {
             machine.model,
             machine.serial_number,
             machine.asset_tag,
+            machine.public_code,
             machine.location,
             machine.year_installed,
             machine.status.as_str(),
@@ -104,8 +107,8 @@ impl MachineRepository for MySqlMachineRepo {
             MachineRow,
             r#"
             SELECT id, organization_id, plan_id, name, make, model, serial_number, asset_tag,
-                   location, year_installed, status, primary_photo_version_id, created_by,
-                   created_at, updated_at
+                   public_code, location, year_installed, status, primary_photo_version_id,
+                   created_by, created_at, updated_at
             FROM machines WHERE id = ? AND organization_id = ?
             "#,
             id.to_string(),
@@ -117,13 +120,30 @@ impl MachineRepository for MySqlMachineRepo {
         .into_domain()
     }
 
+    async fn find_by_public_code(&self, code: &str) -> AppResult<Option<Machine>> {
+        let row = sqlx::query_as!(
+            MachineRow,
+            r#"
+            SELECT id, organization_id, plan_id, name, make, model, serial_number, asset_tag,
+                   public_code, location, year_installed, status, primary_photo_version_id,
+                   created_by, created_at, updated_at
+            FROM machines WHERE public_code = ?
+            "#,
+            code,
+        )
+        .fetch_optional(&self.pool)
+        .await
+        .map_err(|e| map_sqlx(e, "machine"))?;
+        row.map(MachineRow::into_domain).transpose()
+    }
+
     async fn list(&self, org: OrgId, limit: i64, offset: i64) -> AppResult<(Vec<Machine>, i64)> {
         let rows = sqlx::query_as!(
             MachineRow,
             r#"
             SELECT id, organization_id, plan_id, name, make, model, serial_number, asset_tag,
-                   location, year_installed, status, primary_photo_version_id, created_by,
-                   created_at, updated_at
+                   public_code, location, year_installed, status, primary_photo_version_id,
+                   created_by, created_at, updated_at
             FROM machines WHERE organization_id = ?
             ORDER BY created_at ASC, id ASC
             LIMIT ? OFFSET ?
@@ -157,8 +177,8 @@ impl MachineRepository for MySqlMachineRepo {
             MachineRow,
             r#"
             SELECT id, organization_id, plan_id, name, make, model, serial_number, asset_tag,
-                   location, year_installed, status, primary_photo_version_id, created_by,
-                   created_at, updated_at
+                   public_code, location, year_installed, status, primary_photo_version_id,
+                   created_by, created_at, updated_at
             FROM machines WHERE organization_id = ?
             ORDER BY created_at ASC, id ASC
             "#,
@@ -175,8 +195,8 @@ impl MachineRepository for MySqlMachineRepo {
             r#"
             UPDATE machines SET
               plan_id = ?, name = ?, make = ?, model = ?, serial_number = ?, asset_tag = ?,
-              location = ?, year_installed = ?, status = ?, primary_photo_version_id = ?,
-              updated_at = ?
+              public_code = ?, location = ?, year_installed = ?, status = ?,
+              primary_photo_version_id = ?, updated_at = ?
             WHERE id = ? AND organization_id = ?
             "#,
             machine.plan_id.map(|p| p.to_string()),
@@ -185,6 +205,7 @@ impl MachineRepository for MySqlMachineRepo {
             machine.model,
             machine.serial_number,
             machine.asset_tag,
+            machine.public_code,
             machine.location,
             machine.year_installed,
             machine.status.as_str(),

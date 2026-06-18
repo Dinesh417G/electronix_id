@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "\n            INSERT INTO machines\n              (id, organization_id, plan_id, name, make, model, serial_number, asset_tag,\n               public_code, location, year_installed, status, primary_photo_version_id,\n               created_by, created_at, updated_at)\n            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 16
+    },
+    "nullable": []
+  },
+  "hash": "a4f4a91ea64f017070a24b3a326962f109fdcfd02c40a8d2fde13537bd918771"
+}

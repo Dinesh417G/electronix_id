@@ -305,6 +305,35 @@ impl std::fmt::Display for Tier {
 }
 
 // ---------------------------------------------------------------------------
+// PublicCode  (opaque machine tag for the QR/scan resolver)
+// ---------------------------------------------------------------------------
+
+/// Generator for a machine's public tag code.
+///
+/// The code goes in the QR on the machine and is the only identifier a scanner
+/// presents to the resolver. It must be **opaque** (not the time-sortable UUID,
+/// which is guessable) and **rotatable** (issue a fresh code to revoke a tag).
+///
+/// 16 chars of Crockford base32 (alphabet excludes I, L, O, U to avoid misreads)
+/// drawn from a CSPRNG → 32^16 ≈ 2^80 space, far too large to enumerate.
+pub struct PublicCode;
+
+impl PublicCode {
+    /// Crockford base32 alphabet (no I, L, O, U).
+    const ALPHABET: &'static [u8; 32] = b"0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+    pub const LEN: usize = 16;
+
+    /// Generate a fresh random 16-char code.
+    pub fn generate() -> String {
+        use rand::Rng;
+        let mut rng = rand::thread_rng();
+        (0..Self::LEN)
+            .map(|_| Self::ALPHABET[rng.gen_range(0..32)] as char)
+            .collect()
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Currency + Money  (integer minor units; never floats)
 // ---------------------------------------------------------------------------
 
@@ -433,6 +462,15 @@ mod tests {
         assert!(MachineStatus::Active.is_active());
         assert!("retired".parse::<MachineStatus>().unwrap() == MachineStatus::Retired);
         assert!("exploded".parse::<MachineStatus>().is_err());
+    }
+
+    #[test]
+    fn public_code_is_16_chars_from_alphabet_and_random() {
+        let a = PublicCode::generate();
+        let b = PublicCode::generate();
+        assert_eq!(a.len(), PublicCode::LEN);
+        assert!(a.bytes().all(|c| PublicCode::ALPHABET.contains(&c)));
+        assert_ne!(a, b, "two draws should not collide");
     }
 
     #[test]

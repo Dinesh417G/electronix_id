@@ -12,11 +12,18 @@ repository traits; every query is scoped by `organization_id`.
 
 ```
 electronix-id/
-├── Cargo.toml          # workspace, member crates/api
+├── Cargo.toml          # workspace: crates/api, crates/resolver
 ├── migrations/         # sqlx migrations (0001_init.sql, ...)
-└── crates/api/         # the API binary; layers are modules under src/
-    └── src/{domain, application, infrastructure, web}
+├── crates/api/         # tenant API binary; layers are modules under src/
+│   └── src/{domain, application, infrastructure, web}
+└── crates/resolver/    # public QR/scan service; reuses api's domain + adapters
 ```
+
+Two binaries share one database and JWT secret:
+- **`api`** (`:8080`) — the authenticated tenant API; owns the schema/migrations.
+- **`resolver`** (`:8081`) — a separate **public** service that maps a machine's
+  opaque QR tag code to a passport view. A scan needs no login for the summary;
+  the full document inventory is gated on a token whose org owns the machine.
 
 ## Prerequisites
 
@@ -34,7 +41,8 @@ Copy `.env.example` to `.env` and fill it in:
 | Var | Meaning |
 |---|---|
 | `DATABASE_URL` | `mysql://user:pass@host:port/electronix_id` |
-| `BIND_ADDR` | listen address, e.g. `0.0.0.0:8080` |
+| `BIND_ADDR` | api listen address, e.g. `0.0.0.0:8080` |
+| `RESOLVER_BIND_ADDR` | resolver listen address (default `0.0.0.0:8081`) |
 | `JWT_SECRET` | HS256 secret, **≥ 32 bytes** (startup fails otherwise) |
 | `ACCESS_TOKEN_TTL_SECS` | access-token lifetime (default 900) |
 | `REFRESH_TOKEN_TTL_SECS` | refresh-token lifetime (default 2592000) |
@@ -47,8 +55,9 @@ Copy `.env.example` to `.env` and fill it in:
 
 ```bash
 sqlx database create
-sqlx migrate run
-cargo run            # serves on BIND_ADDR; GET /health -> 200
+sqlx migrate run                 # api owns the schema
+cargo run -p electronix-id-api       # tenant API on BIND_ADDR; GET /health -> 200
+cargo run -p electronix-id-resolver  # public resolver on RESOLVER_BIND_ADDR
 ```
 
 ## Quality gates
@@ -86,6 +95,8 @@ errors return `{ error: { code, message } }`; money is `{ amount_minor, currency
 **Machines** (org-scoped, paginated)
 - `GET /machines` · `POST /machines` · `GET /machines/{id}` · `PATCH /machines/{id}`
   · `DELETE /machines/{id}` · `PATCH /machines/{id}/tier`
+- `POST /machines/{id}/tag/rotate` (admin/owner) — issue a fresh public scan code,
+  revoking the old QR tag. Each machine is born with a `public_code`.
 
 **Documents & versions** (generic, versioned)
 - `GET /machines/{machine_id}/documents` (filter `?category=`) · `POST /machines/{machine_id}/documents`
@@ -97,3 +108,15 @@ errors return `{ error: { code, message } }`; money is `{ amount_minor, currency
 
 **Pricing**
 - `GET /plans`
+
+### Resolver service (`:8081`, separate binary)
+
+Public QR/scan API. A machine's QR encodes its `public_code`; the resolver maps
+it to a passport. JSON, `snake_case`, same error envelope as the api.
+
+- `GET /health` · `GET /health/ready`
+- `GET /r/{code}` — **public** passport summary (name, make/model, status, org,
+  photo link). No documents, no internal ids.
+- `GET /r/{code}/photo` — **public** primary-photo stream.
+- `GET /r/{code}/full` — **gated**: requires a `Bearer` token whose org owns the
+  machine (cross-org → 404). Returns the document inventory with current versions.

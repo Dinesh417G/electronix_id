@@ -57,6 +57,10 @@ pub trait DocumentRepository: Send + Sync {
         org: OrgId,
         doc: DocumentId,
     ) -> AppResult<Option<DocumentVersion>>;
+    /// Unscoped lookup of a single version by its id — used by the resolver to
+    /// stream a machine's primary photo (the id comes from the machine's own
+    /// `primary_photo_version_id`, so it is already org-bound).
+    async fn find_version_by_id(&self, id: VersionId) -> AppResult<Option<DocumentVersion>>;
 
     /// The §5 version-bump transaction, atomic:
     /// 1. `SELECT ... FOR UPDATE` the documents row (serialize uploads),

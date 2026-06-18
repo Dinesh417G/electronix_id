@@ -67,6 +67,7 @@ fn machine(org_id: OrgId, name: &str) -> Machine {
         model: None,
         serial_number: None,
         asset_tag: None,
+        public_code: Some(uuid::Uuid::now_v7().simple().to_string()[..16].to_uppercase()),
         location: None,
         year_installed: None,
         status: MachineStatus::Active,

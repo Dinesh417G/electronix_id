@@ -1,6 +1,6 @@
 {
   "db_name": "MySQL",
-  "query": "\n            SELECT id, organization_id, plan_id, name, make, model, serial_number, asset_tag,\n                   location, year_installed, status, primary_photo_version_id, created_by,\n                   created_at, updated_at\n            FROM machines WHERE organization_id = ?\n            ORDER BY created_at ASC, id ASC\n            ",
+  "query": "\n            SELECT id, organization_id, plan_id, name, make, model, serial_number, asset_tag,\n                   public_code, location, year_installed, status, primary_photo_version_id,\n                   created_by, created_at, updated_at\n            FROM machines WHERE organization_id = ?\n            ORDER BY created_at ASC, id ASC\n            ",
   "describe": {
     "columns": [
       {
@@ -77,6 +77,15 @@
       },
       {
         "ordinal": 8,
+        "name": "public_code",
+        "type_info": {
+          "type": "String",
+          "flags": "UNIQUE_KEY",
+          "max_size": 64
+        }
+      },
+      {
+        "ordinal": 9,
         "name": "location",
         "type_info": {
           "type": "VarString",
@@ -85,7 +94,7 @@
         }
       },
       {
-        "ordinal": 9,
+        "ordinal": 10,
         "name": "year_installed",
         "type_info": {
           "type": "Short",
@@ -94,7 +103,7 @@
         }
       },
       {
-        "ordinal": 10,
+        "ordinal": 11,
         "name": "status",
         "type_info": {
           "type": "VarString",
@@ -103,7 +112,7 @@
         }
       },
       {
-        "ordinal": 11,
+        "ordinal": 12,
         "name": "primary_photo_version_id",
         "type_info": {
           "type": "String",
@@ -112,7 +121,7 @@
         }
       },
       {
-        "ordinal": 12,
+        "ordinal": 13,
         "name": "created_by",
         "type_info": {
           "type": "String",
@@ -121,7 +130,7 @@
         }
       },
       {
-        "ordinal": 13,
+        "ordinal": 14,
         "name": "created_at",
         "type_info": {
           "type": "Datetime",
@@ -130,7 +139,7 @@
         }
       },
       {
-        "ordinal": 14,
+        "ordinal": 15,
         "name": "updated_at",
         "type_info": {
           "type": "Datetime",
@@ -153,6 +162,7 @@
       true,
       true,
       true,
+      true,
       false,
       true,
       true,
@@ -160,5 +170,5 @@
       false
     ]
   },
-  "hash": "5d997ca1ee936affd702044713db578c6310905777c13ca34be2670314f1417a"
+  "hash": "bfe62a72352d56ef3a05a55905dc235043211db9f0fe46d4f8ac5f55af74e552"
 }
