@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "DELETE FROM users WHERE id = ? AND organization_id = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "8048fa0ecf39019b8d92491496d45dd4e1e77147ec5706cbf1dbb316d070b156"
+}

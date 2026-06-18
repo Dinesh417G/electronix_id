@@ -1,0 +1,164 @@
+{
+  "db_name": "MySQL",
+  "query": "\n            SELECT id, organization_id, plan_id, name, make, model, serial_number, asset_tag,\n                   location, year_installed, status, primary_photo_version_id, created_by,\n                   created_at, updated_at\n            FROM machines WHERE id = ? AND organization_id = ?\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": {
+          "type": "String",
+          "flags": "NOT_NULL | PRIMARY_KEY | NO_DEFAULT_VALUE",
+          "max_size": 144
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "organization_id",
+        "type_info": {
+          "type": "String",
+          "flags": "NOT_NULL | MULTIPLE_KEY | NO_DEFAULT_VALUE",
+          "max_size": 144
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "plan_id",
+        "type_info": {
+          "type": "String",
+          "flags": "MULTIPLE_KEY",
+          "max_size": 144
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "name",
+        "type_info": {
+          "type": "VarString",
+          "flags": "NOT_NULL | NO_DEFAULT_VALUE",
+          "max_size": 640
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "make",
+        "type_info": {
+          "type": "VarString",
+          "flags": "",
+          "max_size": 480
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "model",
+        "type_info": {
+          "type": "VarString",
+          "flags": "",
+          "max_size": 480
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "serial_number",
+        "type_info": {
+          "type": "VarString",
+          "flags": "",
+          "max_size": 480
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "asset_tag",
+        "type_info": {
+          "type": "VarString",
+          "flags": "",
+          "max_size": 256
+        }
+      },
+      {
+        "ordinal": 8,
+        "name": "location",
+        "type_info": {
+          "type": "VarString",
+          "flags": "",
+          "max_size": 640
+        }
+      },
+      {
+        "ordinal": 9,
+        "name": "year_installed",
+        "type_info": {
+          "type": "Short",
+          "flags": "",
+          "max_size": 6
+        }
+      },
+      {
+        "ordinal": 10,
+        "name": "status",
+        "type_info": {
+          "type": "VarString",
+          "flags": "NOT_NULL",
+          "max_size": 64
+        }
+      },
+      {
+        "ordinal": 11,
+        "name": "primary_photo_version_id",
+        "type_info": {
+          "type": "String",
+          "flags": "",
+          "max_size": 144
+        }
+      },
+      {
+        "ordinal": 12,
+        "name": "created_by",
+        "type_info": {
+          "type": "String",
+          "flags": "",
+          "max_size": 144
+        }
+      },
+      {
+        "ordinal": 13,
+        "name": "created_at",
+        "type_info": {
+          "type": "Datetime",
+          "flags": "NOT_NULL | BINARY",
+          "max_size": 26
+        }
+      },
+      {
+        "ordinal": 14,
+        "name": "updated_at",
+        "type_info": {
+          "type": "Datetime",
+          "flags": "NOT_NULL | BINARY",
+          "max_size": 26
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      true,
+      true,
+      false,
+      false
+    ]
+  },
+  "hash": "251edd1021e6a31edc0780aef3a2c311616be48817760706512f7ab437255294"
+}

@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "UPDATE documents SET current_version_no = ?, updated_at = ? WHERE id = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 3
+    },
+    "nullable": []
+  },
+  "hash": "353fbf7b6711e795465e47ff5d217e9e3ac2524ab386b35e014adf7dcecc134b"
+}

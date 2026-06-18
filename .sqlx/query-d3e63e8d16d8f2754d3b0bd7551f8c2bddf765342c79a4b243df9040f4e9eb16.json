@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "\n            UPDATE machines SET\n              plan_id = ?, name = ?, make = ?, model = ?, serial_number = ?, asset_tag = ?,\n              location = ?, year_installed = ?, status = ?, primary_photo_version_id = ?,\n              updated_at = ?\n            WHERE id = ? AND organization_id = ?\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 13
+    },
+    "nullable": []
+  },
+  "hash": "d3e63e8d16d8f2754d3b0bd7551f8c2bddf765342c79a4b243df9040f4e9eb16"
+}

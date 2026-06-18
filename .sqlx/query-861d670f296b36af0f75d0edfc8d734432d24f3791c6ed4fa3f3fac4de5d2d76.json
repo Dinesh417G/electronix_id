@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "\n            INSERT INTO document_versions\n              (id, document_id, version_no, is_current, storage_key, original_filename,\n               mime_type, size_bytes, checksum_sha256, content_json, change_note, metadata,\n               created_by, created_at)\n            VALUES (?, ?, ?, TRUE, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 13
+    },
+    "nullable": []
+  },
+  "hash": "861d670f296b36af0f75d0edfc8d734432d24f3791c6ed4fa3f3fac4de5d2d76"
+}

@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "\n            INSERT INTO organizations (id, name, slug, created_at, updated_at)\n            VALUES (?, ?, ?, ?, ?)\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 5
+    },
+    "nullable": []
+  },
+  "hash": "62b55272ae1ba7ee68b6cf997178e00185df805193aaa6a6e885cd1781807574"
+}

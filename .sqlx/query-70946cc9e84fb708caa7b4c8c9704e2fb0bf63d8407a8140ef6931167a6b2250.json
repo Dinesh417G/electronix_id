@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "UPDATE organizations SET name = ?, slug = ?, updated_at = ? WHERE id = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 4
+    },
+    "nullable": []
+  },
+  "hash": "70946cc9e84fb708caa7b4c8c9704e2fb0bf63d8407a8140ef6931167a6b2250"
+}

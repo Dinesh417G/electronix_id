@@ -1,0 +1,7 @@
+/target
+**/target
+.idea/
+.env
+/storage
+storage/
+# .sqlx is intentionally committed so the project builds offline.

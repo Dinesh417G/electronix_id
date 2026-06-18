@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "\n            UPDATE documents SET category = ?, name = ?, updated_at = ?\n            WHERE id = ?\n              AND machine_id IN (SELECT id FROM machines WHERE organization_id = ?)\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 5
+    },
+    "nullable": []
+  },
+  "hash": "4f6693a6f188816e665233d56874ac9586adda73498da3040159d0890f6a0d68"
+}

@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "UPDATE document_versions SET is_current = FALSE WHERE document_id = ? AND version_no < ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "c1007685982f920e6654286f8bce48bb041d31ae8170f6d18c456f706e9e8292"
+}

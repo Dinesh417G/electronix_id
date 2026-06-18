@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "\n            INSERT INTO subscriptions\n              (id, organization_id, status, trial_ends_at, current_period_start,\n               current_period_end, created_at, updated_at)\n            VALUES (?, ?, ?, ?, ?, ?, ?, ?)\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 8
+    },
+    "nullable": []
+  },
+  "hash": "bebc50576aeda05aad6dbc4c77356a3b485b9af739df90457343f31301c7f5a2"
+}

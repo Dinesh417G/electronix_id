@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "DELETE FROM machines WHERE id = ? AND organization_id = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "d767fa80ddf2c1711d4799f1aaf48e56c2924b36bf96c73cd9268f1c5e226531"
+}

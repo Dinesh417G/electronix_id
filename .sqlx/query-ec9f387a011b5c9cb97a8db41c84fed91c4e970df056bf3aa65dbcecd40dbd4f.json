@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "\n            INSERT INTO documents\n              (id, machine_id, category, name, storage_kind, current_version_no,\n               created_by, created_at, updated_at)\n            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 9
+    },
+    "nullable": []
+  },
+  "hash": "ec9f387a011b5c9cb97a8db41c84fed91c4e970df056bf3aa65dbcecd40dbd4f"
+}

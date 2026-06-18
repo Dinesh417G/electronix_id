@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "UPDATE machines SET primary_photo_version_id = ?, updated_at = ? WHERE id = ? AND organization_id = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 4
+    },
+    "nullable": []
+  },
+  "hash": "59165ec55a7adf2a1504e4e9dd634cf7bb97b0746c19ed18423cc879648c7154"
+}

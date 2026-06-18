@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "\n            UPDATE subscriptions SET\n              status = ?, trial_ends_at = ?, current_period_start = ?,\n              current_period_end = ?, updated_at = ?\n            WHERE organization_id = ?\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 6
+    },
+    "nullable": []
+  },
+  "hash": "6af379984ac15972e9f84a4a3b7aaa9b07cce02bf9e370f09edb45bdbdcd4c80"
+}
